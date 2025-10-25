@@ -123,7 +123,7 @@ def open_readandtalk() -> list[StudentInfo]:
             student_ids.append(student.inner_text())
 
         # ITERATE TO GET REPORTS
-        for s_id in student_ids[0:1]:
+        for s_id in student_ids:
             try:
                 student_infos.append(get_student_info(page, s_id))
             except Exception as e:
