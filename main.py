@@ -5,11 +5,13 @@ from crawling import open_readandtalk, StudentInfo
 from report import create_learning_report
 import os
 from pathlib import Path
+
 load_dotenv()
 
 client = genai.Client(api_key=os.getenv("GEMINI_KEY"))
 
-def generate_comment(student_info : StudentInfo) -> str:
+
+def generate_comment(student_info: StudentInfo) -> str:
     prompt = f"""
     <Role>
     You are an experienced English teacher, who carefully uses data and experience to guide students.
@@ -45,12 +47,16 @@ def generate_comment(student_info : StudentInfo) -> str:
     </Example>
     
     """
-    response = client.models.generate_content(
-        model = "gemini-2.0-flash",
-        contents = prompt,
-        config=types.GenerateContentConfig(temperature=0.3)
-    )
-    return response.text
+    try:
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=prompt,
+            config=types.GenerateContentConfig(temperature=0.3),
+        )
+        return response.text
+    except Exception as e:
+        return ""
+
 
 if __name__ == "__main__":
     student_infos: list[StudentInfo] = open_readandtalk()
@@ -59,6 +65,4 @@ if __name__ == "__main__":
 
     for student_info in student_infos:
         comment = generate_comment(student_info)
-        create_learning_report(student_info, comment, dir = reports_dir)
-
-
+        create_learning_report(student_info, comment, dir=reports_dir)
