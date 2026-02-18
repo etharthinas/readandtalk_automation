@@ -23,7 +23,7 @@ thin_border = Border(
 thick_side = Side(style="thick")
 
 
-def create_learning_report(student_info: StudentInfo, comments: str, dir = "/"):
+def create_learning_report(student_info: StudentInfo, comments: str, dir="/"):
     wb = Workbook()
     ws = wb.active
     ws.title = "Report"
@@ -44,9 +44,13 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir = "/"):
     ws.merge_cells("B2:D2")
     set_default(
         ws["B2"],
-        student_info.basic_info.time[:4]
+        student_info.basic_info.time_start[:4]
         + "년 "
-        + student_info.basic_info.time[4:]
+        + student_info.basic_info.time_start[4:]
+        + "월 ~ "
+        + student_info.basic_info.time_end[:4]
+        + "년 "
+        + student_info.basic_info.time_end[4:]
         + "월",
     )
 
@@ -93,17 +97,17 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir = "/"):
             "정독(권)",
             "다독(권)",
             "인문고전(권)",
-            "당월(권)",
-            "전월(권)",
+            "당분기권)",
+            "전분기(권)",
             "총 학습량(권)",
         ],
         data=[
-            student_info.book_info.intensive,
-            student_info.book_info.extensive,
-            student_info.book_info.classics,
-            student_info.book_info.curr_month,
-            student_info.book_info.prev_month,
-            student_info.book_info.total,
+            student_info.book_info[0].intensive,
+            student_info.book_info[0].extensive,
+            student_info.book_info[0].classics,
+            student_info.book_info[0].curr_month,
+            student_info.book_info[1].curr_month,
+            student_info.book_info[0].total,
         ],
         start_row=6,
         flag=True,
@@ -113,20 +117,20 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir = "/"):
         ws,
         title="Word 학습량\n정답률",
         headings=[
-            "당월(개)",
+            "당분기(개)",
             "정답률(%)",
-            "전월(개)",
+            "전분기(개)",
             "정답률(%)",
             "총학습량(개)",
             "정답률(%)",
         ],
         data=[
-            student_info.word_info.curr_count,
-            student_info.word_info.curr_rate,
-            student_info.word_info.prev_count,
-            student_info.word_info.prev_rate,
-            student_info.word_info.total_count,
-            student_info.word_info.total_rate,
+            student_info.word_info[0].curr_count,
+            student_info.word_info[0].curr_rate,
+            student_info.word_info[1].curr_count,
+            student_info.word_info[1].curr_rate,
+            student_info.word_info[0].total_count,
+            student_info.word_info[0].total_rate,
         ],
         start_row=10,
     )
@@ -135,20 +139,20 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir = "/"):
         ws,
         title="Puzzle 학습량\n정답률",
         headings=[
-            "당월(문장)",
+            "당분기(문장)",
             "정답률(%)",
-            "전월(문장)",
+            "전분기(문장)",
             "정답률(%)",
             "총학습량(문장)",
             "정답률(%)",
         ],
         data=[
-            student_info.puzzle_info.curr_count,
-            student_info.puzzle_info.curr_rate,
-            student_info.puzzle_info.prev_count,
-            student_info.puzzle_info.prev_rate,
-            student_info.puzzle_info.total_count,
-            student_info.puzzle_info.total_rate,
+            student_info.puzzle_info[0].curr_count,
+            student_info.puzzle_info[0].curr_rate,
+            student_info.puzzle_info[1].curr_count,
+            student_info.puzzle_info[1].curr_rate,
+            student_info.puzzle_info[0].total_count,
+            student_info.puzzle_info[0].total_rate,
         ],
         start_row=14,
     )
@@ -157,20 +161,20 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir = "/"):
         ws,
         title="Dictation 학습량\n정답률",
         headings=[
-            "당월(문장)",
+            "당분기(문장)",
             "정답률(%)",
-            "전월(문장)",
+            "전분기(문장)",
             "정답률(%)",
             "총학습량(문장)",
             "정답률(%)",
         ],
         data=[
-            student_info.dictation_info.curr_count,
-            student_info.dictation_info.curr_rate,
-            student_info.dictation_info.prev_count,
-            student_info.dictation_info.prev_rate,
-            student_info.dictation_info.total_count,
-            student_info.dictation_info.total_rate,
+            student_info.dictation_info[0].curr_count,
+            student_info.dictation_info[0].curr_rate,
+            student_info.dictation_info[1].curr_count,
+            student_info.dictation_info[1].curr_rate,
+            student_info.dictation_info[0].total_count,
+            student_info.dictation_info[0].total_rate,
         ],
         start_row=18,
     )
@@ -179,20 +183,20 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir = "/"):
         ws,
         title="Writing 학습량\n정답률",
         headings=[
-            "당월(문장)",
+            "당분기(문장)",
             "정답률(%)",
-            "전월(문장)",
+            "전분기(문장)",
             "정답률(%)",
             "총학습량(문장)",
             "정답률(%)",
         ],
         data=[
-            student_info.writing_info.curr_count,
-            student_info.writing_info.curr_rate,
-            student_info.writing_info.prev_count,
-            student_info.writing_info.prev_rate,
-            student_info.writing_info.total_count,
-            student_info.writing_info.total_rate,
+            student_info.writing_info[0].curr_count,
+            student_info.writing_info[0].curr_rate,
+            student_info.writing_info[1].curr_count,
+            student_info.writing_info[1].curr_rate,
+            student_info.writing_info[0].total_count,
+            student_info.writing_info[0].total_rate,
         ],
         start_row=22,
     )
@@ -201,20 +205,20 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir = "/"):
         ws,
         title="Quiz 학습량\n정답률",
         headings=[
-            "당월(문제)",
+            "당분기(문제)",
             "정답률(%)",
-            "전월(문제)",
+            "전분기(문제)",
             "정답률(%)",
             "총학습량(문제)",
             "정답률(%)",
         ],
         data=[
-            student_info.quiz_info.curr_count,
-            student_info.quiz_info.curr_rate,
-            student_info.quiz_info.prev_count,
-            student_info.quiz_info.prev_rate,
-            student_info.quiz_info.total_count,
-            student_info.quiz_info.total_rate,
+            student_info.quiz_info[0].curr_count,
+            student_info.quiz_info[0].curr_rate,
+            student_info.quiz_info[1].curr_count,
+            student_info.quiz_info[1].curr_rate,
+            student_info.quiz_info[0].total_count,
+            student_info.quiz_info[0].total_rate,
         ],
         start_row=26,
     )
@@ -230,9 +234,14 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir = "/"):
 
     ws.merge_cells("A30:G35")
     set_default(ws["A30"], comments)
-    ws["A30"].alignment = Alignment(horizontal="left", vertical="center", wrap_text=True)
+    ws["A30"].alignment = Alignment(
+        horizontal="left", vertical="center", wrap_text=True
+    )
 
-    wb.save(dir / f"{student_info.basic_info.time[2:]}_{student_info.basic_info.name}_통신문.xlsx")
+    wb.save(
+        dir
+        / f"{student_info.basic_info.time_start[2:]}_{student_info.basic_info.time_end[2:]}_{student_info.basic_info.name}_통신문.xlsx"
+    )
 
 
 def create_section(
@@ -295,16 +304,16 @@ def create_section(
     chart.y_axis.min = 0
     chart.y_axis.max = 100 if not flag else 25
     chart.y_axis.majorGridlines = ChartLines()
-    
+
     # chart.x_axis.crosses = "min"
-    chart.y_axis.majorUnit = 20 if not flag else 5   
+    chart.y_axis.majorUnit = 20 if not flag else 5
     chart.y_axis.axPos = "b"
 
     chart.dataLabels = DataLabelList()
-    chart.dataLabels.showVal = True      # show the numeric value
-    chart.dataLabels.showLegendKey = False   # do NOT show series name
-    chart.dataLabels.showCatName = False     # do NOT show category name
-    chart.dataLabels.showSerName = False     # do NOT show series name
+    chart.dataLabels.showVal = True  # show the numeric value
+    chart.dataLabels.showLegendKey = False  # do NOT show series name
+    chart.dataLabels.showCatName = False  # do NOT show category name
+    chart.dataLabels.showSerName = False  # do NOT show series name
 
     ws.add_chart(chart, f"A{start_row+2}")
 
