@@ -9,7 +9,7 @@ from dateutil.relativedelta import relativedelta
 load_dotenv()
 
 MAIN_URL = "https://www.englishplatform.co.kr/elp_login.php"
-ADMIN_URL = "https://www.englishplatform.co.kr/adm/member_list.php?teaid=&branid=&sfl=mb_level&stx=3"
+ADMIN_URL = "https://www.englishplatform.co.kr/adm/member_list.php?teaid=&branid=&sfl=mb_level&stx=3&page={page}"
 REPORT_URL_TEMPLATE = (
     "https://www.englishplatform.co.kr/adm/report_mini.php?mb_date1={date}&mb_id={s_id}"
 )
@@ -105,19 +105,20 @@ def open_readandtalk() -> list[StudentInfo]:
         input_id.fill(os.getenv("READANDTALK_ID"))
         input_pw.fill(os.getenv("READANDTALK_PW"))
         login_btn.click()
-
-        page.wait_for_load_state("load")
-
-        page.goto(ADMIN_URL)
-
-        # GET LIST
         student_ids = []
 
         student_infos = list()
-        student_list = page.locator("tbody > tr td[headers='mb_list_id']").all()
+        page.wait_for_load_state("load")
 
-        for student in student_list:
-            student_ids.append(student.inner_text())
+        for i in range(4):
+            page.goto(ADMIN_URL.format(page=i+1))
+
+        # GET LIST
+        
+            student_list = page.locator("tbody > tr td[headers='mb_list_id']").all()
+
+            for student in student_list:
+                student_ids.append(student.inner_text())
 
         # ITERATE TO GET REPORTS
         for s_id in student_ids:
@@ -219,6 +220,7 @@ def get_book_info(page: Page, current: bool = False) -> BookInfo:
             .inner_text()
             .split(" ")[1]
             .split("권")[0]
+            .replace(",", "")
         )
     else:
         total = 0
