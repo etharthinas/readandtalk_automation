@@ -10,6 +10,7 @@ blue_fill = PatternFill(fill_type="solid", start_color="4472C4", end_color="4472
 orange_fill = PatternFill(fill_type="solid", start_color="ED7D31", end_color="ED7D31")
 
 center = Alignment(horizontal="center", vertical="center", wrap_text=True)
+left = Alignment(horizontal="left", vertical="center", wrap_text=True)
 
 COMMA_FORMAT_INTEGER = "#,##0"
 
@@ -53,6 +54,7 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir="/"):
         + student_info.basic_info.time_end[4:]
         + "월",
     )
+    ws["B2"].alignment = left
 
     # ws["E2"] = "예상 Lexile"
     # apply_grey(ws["E2"])
@@ -69,6 +71,12 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir="/"):
     apply_grey(ws["C3"])
 
     set_default(ws["D3"], student_info.basic_info.school + " " + str(student_info.basic_info.grade))
+
+    ws["E3"] = "학습단계"
+    apply_grey(ws["E3"])
+
+    ws.merge_cells("F3:G3")
+    set_default(ws["F3"], student_info.basic_info.level)
 
     # ws["E3"] = "학년"
     # apply_grey(ws["E3"])
@@ -109,7 +117,7 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir="/"):
             student_info.book_info[1].curr_month,
             student_info.book_info[0].total,
         ],
-        start_row=6,
+        start_row=5,
         flag=True,
     )
 
@@ -132,7 +140,7 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir="/"):
             student_info.word_info[0].total_count,
             student_info.word_info[0].total_rate,
         ],
-        start_row=10,
+        start_row=9,
     )
 
     create_section(
@@ -154,7 +162,7 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir="/"):
             student_info.puzzle_info[0].total_count,
             student_info.puzzle_info[0].total_rate,
         ],
-        start_row=14,
+        start_row=13,
     )
 
     create_section(
@@ -176,7 +184,7 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir="/"):
             student_info.dictation_info[0].total_count,
             student_info.dictation_info[0].total_rate,
         ],
-        start_row=18,
+        start_row=17,
     )
 
     create_section(
@@ -198,7 +206,7 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir="/"):
             student_info.writing_info[0].total_count,
             student_info.writing_info[0].total_rate,
         ],
-        start_row=22,
+        start_row=21,
     )
 
     create_section(
@@ -220,7 +228,7 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir="/"):
             student_info.quiz_info[0].total_count,
             student_info.quiz_info[0].total_rate,
         ],
-        start_row=26,
+        start_row=25,
     )
 
     # ----- Footer -------
@@ -275,10 +283,11 @@ def create_section(
     ws.row_dimensions[start_row + 2].height = 70
     chart = BarChart()
     chart.type = "bar"
-    chart.height = 2
-    chart.style = 2
-    chart.width = 18
+    chart.height = 2.5
+    chart.style = 3
+    chart.width = 19.2
     chart.legend = None
+    chart.roundedCorners = False
 
     data_curr = Reference(
         ws,
@@ -301,9 +310,12 @@ def create_section(
     chart.series[0].graphicalProperties.solidFill = "ED7D31"
     chart.series[1].graphicalProperties.solidFill = "4472C4"
 
-    chart.y_axis.min = 0
-    chart.y_axis.max = 100 if not flag else 25
+    # chart.y_axis.min = 0
+    # chart.y_axis.max = 100
+    chart.y_axis.scaling.min = 0
+    chart.y_axis.scaling.max = 105
     chart.y_axis.majorGridlines = ChartLines()
+    chart.y_axis.tickLblPos = "nextTo" 
 
     chart.y_axis.majorUnit = 20
     chart.y_axis.axPos = "b"

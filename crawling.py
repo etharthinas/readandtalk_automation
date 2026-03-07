@@ -114,7 +114,6 @@ def open_readandtalk() -> list[StudentInfo]:
             page.goto(ADMIN_URL.format(page=i+1))
 
         # GET LIST
-        
             student_list = page.locator("tbody > tr td[headers='mb_list_id']").all()
 
             for student in student_list:
