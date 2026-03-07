@@ -41,7 +41,7 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir="/"):
     ws["A2"] = "학습 기간"
     apply_grey(ws["A2"])
 
-    ws.merge_cells("B2:D2")
+    ws.merge_cells("B2:G2")
     set_default(
         ws["B2"],
         student_info.basic_info.time_start[:4]
@@ -54,11 +54,11 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir="/"):
         + "월",
     )
 
-    ws["E2"] = "예상 Lexile"
-    apply_grey(ws["E2"])
+    # ws["E2"] = "예상 Lexile"
+    # apply_grey(ws["E2"])
 
-    ws.merge_cells("F2:G2")
-    set_default(ws["F2"], str(student_info.basic_info.lexile) + "L")
+    # ws.merge_cells("F2:G2")
+    # set_default(ws["F2"], str(student_info.basic_info.lexile) + "L")
 
     ws["A3"] = "이름"
     apply_grey(ws["A3"])
@@ -68,26 +68,26 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir="/"):
     ws["C3"] = "학교"
     apply_grey(ws["C3"])
 
-    set_default(ws["D3"], student_info.basic_info.school)
+    set_default(ws["D3"], student_info.basic_info.school + " " + str(student_info.basic_info.grade))
 
-    ws["E3"] = "학년"
-    apply_grey(ws["E3"])
+    # ws["E3"] = "학년"
+    # apply_grey(ws["E3"])
 
-    ws.merge_cells("F3:G3")
-    set_default(ws["F3"], student_info.basic_info.grade)
+    # ws.merge_cells("F3:G3")
+    # set_default(ws["F3"], student_info.basic_info.grade)
 
-    ws["A4"] = "수업차수"
-    apply_grey(ws["A4"])
+    # ws["A4"] = "수업차수"
+    # apply_grey(ws["A4"])
 
-    set_default(ws["B4"], student_info.basic_info.count)
+    # set_default(ws["B4"], student_info.basic_info.count)
 
-    ws["C4"] = "학습단계"
-    apply_grey(ws["C4"])
+    # ws["C4"] = "학습단계"
+    # apply_grey(ws["C4"])
 
-    ws.merge_cells("D4:G4")
-    set_default(ws["D4"], student_info.basic_info.level)
+    # ws.merge_cells("D4:G4")
+    # set_default(ws["D4"], student_info.basic_info.level)
 
-    apply_thick_border(ws, row_start=2, row_end=4, column_start=1, column_end=7)
+    apply_thick_border(ws, row_start=2, row_end=3, column_start=1, column_end=7)
 
     # ----- Sections ------
     create_section(
@@ -305,8 +305,7 @@ def create_section(
     chart.y_axis.max = 100 if not flag else 25
     chart.y_axis.majorGridlines = ChartLines()
 
-    # chart.x_axis.crosses = "min"
-    chart.y_axis.majorUnit = 20 if not flag else 5
+    chart.y_axis.majorUnit = 20
     chart.y_axis.axPos = "b"
 
     chart.dataLabels = DataLabelList()

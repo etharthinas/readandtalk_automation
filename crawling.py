@@ -55,14 +55,14 @@ class StudyInfo(BaseModel):
     def __add__(self, other):
         return StudyInfo(
             curr_count=self.curr_count + other.curr_count,
-            curr_rate=int(
+            curr_rate=round(
                 (self.curr_rate * self.curr_count + other.curr_rate * other.curr_count)
                 / (self.curr_count + other.curr_count)
                 if self.curr_count + other.curr_count != 0
                 else 0
             ),
             total_count=self.total_count + other.total_count,
-            total_rate=int(
+            total_rate=round(
                 (
                     self.total_rate * self.total_count
                     + other.total_rate * other.total_count
