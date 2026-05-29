@@ -4,6 +4,9 @@ from openpyxl.chart.label import DataLabelList
 from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
 from openpyxl.chart import BarChart, Reference
+from openpyxl.drawing.image import Image
+from openpyxl.drawing.line import LineProperties
+from openpyxl.chart.shapes import GraphicalProperties
 
 grey_fill = PatternFill(fill_type="solid", start_color="D9D9D9", end_color="D9D9D9")
 blue_fill = PatternFill(fill_type="solid", start_color="4472C4", end_color="4472C4")
@@ -14,11 +17,11 @@ left = Alignment(horizontal="left", vertical="center", wrap_text=True)
 
 COMMA_FORMAT_INTEGER = "#,##0"
 
-thin_border = Border(
-    left=Side(style="thin"),
-    right=Side(style="thin"),
-    top=Side(style="thin"),
-    bottom=Side(style="thin"),
+medium_border = Border(
+    left=Side(style="medium"),
+    right=Side(style="medium"),
+    top=Side(style="medium"),
+    bottom=Side(style="medium"),
 )
 
 thick_side = Side(style="thick")
@@ -30,7 +33,7 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir="/"):
     ws.title = "Report"
 
     for i in ["A", "B", "C", "D", "E", "F", "G"]:
-        ws.column_dimensions[i].width = 13
+        ws.column_dimensions[i].width = 10.5
 
     # ---------- HEADER ----------
     ws.merge_cells("A1:G1")
@@ -39,12 +42,10 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir="/"):
     ws["A1"].alignment = center
 
     # --------- Basic Info ---------
-    ws["A2"] = "학습 기간"
-    apply_grey(ws["A2"])
-
-    ws.merge_cells("B2:G2")
+    ws["A3"] = "학습 기간"
+    apply_grey(ws["A3"])
     set_default(
-        ws["B2"],
+        ws["B3"],
         student_info.basic_info.time_start[:4]
         + "년 "
         + student_info.basic_info.time_start[4:]
@@ -54,7 +55,8 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir="/"):
         + student_info.basic_info.time_end[4:]
         + "월",
     )
-    ws["B2"].alignment = left
+    ws.merge_cells("B3:G3")
+    ws["B3"].alignment = left
 
     # ws["E2"] = "예상 Lexile"
     # apply_grey(ws["E2"])
@@ -62,22 +64,22 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir="/"):
     # ws.merge_cells("F2:G2")
     # set_default(ws["F2"], str(student_info.basic_info.lexile) + "L")
 
-    ws["A3"] = "이름"
-    apply_grey(ws["A3"])
+    ws["A4"] = "이름"
+    apply_grey(ws["A4"])
 
-    set_default(ws["B3"], student_info.basic_info.name)
+    set_default(ws["B4"], student_info.basic_info.name)
 
-    ws["C3"] = "학교"
-    apply_grey(ws["C3"])
+    ws["C4"] = "학교"
+    apply_grey(ws["C4"])
 
-    set_default(ws["D3"], student_info.basic_info.school + " " + str(student_info.basic_info.grade))
+    set_default(ws["D4"], student_info.basic_info.school + " " + str(student_info.basic_info.grade))
 
-    ws["E3"] = "학습단계"
-    apply_grey(ws["E3"])
+    ws["E4"] = "학습단계"
+    apply_grey(ws["E4"])
 
-    ws.merge_cells("F3:G3")
-    set_default(ws["F3"], student_info.basic_info.level)
-
+    set_default(ws["F4"], student_info.basic_info.level)
+    ws.merge_cells("F4:G4")
+    
     # ws["E3"] = "학년"
     # apply_grey(ws["E3"])
 
@@ -95,7 +97,7 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir="/"):
     # ws.merge_cells("D4:G4")
     # set_default(ws["D4"], student_info.basic_info.level)
 
-    apply_thick_border(ws, row_start=2, row_end=3, column_start=1, column_end=7)
+    # apply_thick_border(ws, row_start=3, row_end=4, column_start=1, column_end=7)
 
     # ----- Sections ------
     create_section(
@@ -117,7 +119,7 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir="/"):
             student_info.book_info[1].curr_month,
             student_info.book_info[0].total,
         ],
-        start_row=5,
+        start_row=6,
         flag=True,
     )
 
@@ -140,7 +142,7 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir="/"):
             student_info.word_info[0].total_count,
             student_info.word_info[0].total_rate,
         ],
-        start_row=9,
+        start_row=10,
     )
 
     create_section(
@@ -151,7 +153,7 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir="/"):
             "정답률(%)",
             "전분기(문장)",
             "정답률(%)",
-            "총학습량(문장)",
+            "총학습량\n(문장)",
             "정답률(%)",
         ],
         data=[
@@ -162,7 +164,7 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir="/"):
             student_info.puzzle_info[0].total_count,
             student_info.puzzle_info[0].total_rate,
         ],
-        start_row=13,
+        start_row=14,
     )
 
     create_section(
@@ -184,7 +186,7 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir="/"):
             student_info.dictation_info[0].total_count,
             student_info.dictation_info[0].total_rate,
         ],
-        start_row=17,
+        start_row=18,
     )
 
     create_section(
@@ -195,7 +197,7 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir="/"):
             "정답률(%)",
             "전분기(문장)",
             "정답률(%)",
-            "총학습량(문장)",
+            "총학습량\n(문장)",
             "정답률(%)",
         ],
         data=[
@@ -206,7 +208,7 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir="/"):
             student_info.writing_info[0].total_count,
             student_info.writing_info[0].total_rate,
         ],
-        start_row=21,
+        start_row=22,
     )
 
     create_section(
@@ -217,7 +219,7 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir="/"):
             "정답률(%)",
             "전분기(문제)",
             "정답률(%)",
-            "총학습량(문제)",
+            "총학습량\n(문제)",
             "정답률(%)",
         ],
         data=[
@@ -228,23 +230,27 @@ def create_learning_report(student_info: StudentInfo, comments: str, dir="/"):
             student_info.quiz_info[0].total_count,
             student_info.quiz_info[0].total_rate,
         ],
-        start_row=25,
+        start_row=26,
     )
 
     # ----- Footer -------
-    ws.merge_cells("A29:G29")
-    apply_grey(ws["A29"])
-    ws["A29"].font = Font(bold=True, size=18)
-    ws["A29"].alignment = center
-    ws["A29"] = "Teacher's Comments"
-    ws.row_dimensions[29].height = 70
-    apply_thick_border(ws, row_start=29, row_end=29, column_start=1, column_end=7)
+    apply_grey(ws["A30"])
+    ws.merge_cells("A30:G30")
 
-    ws.merge_cells("A30:G35")
-    set_default(ws["A30"], comments)
-    ws["A30"].alignment = Alignment(
+    ws["A30"].font = Font(bold=True, size=18)
+    ws["A30"].alignment = center
+    ws["A30"] = "Teacher's Comments"
+    ws.row_dimensions[30].height = 60
+    # apply_thick_border(ws, row_start=30, row_end=30, column_start=1, column_end=7)
+
+    set_default(ws["A31"], comments)
+    ws.merge_cells("A31:G36")
+    ws["A31"].alignment = Alignment(
         horizontal="left", vertical="center", wrap_text=True
     )
+
+    img = Image("logo.png")
+    ws.add_image(img, "A37")
 
     wb.save(
         dir
@@ -257,10 +263,10 @@ def create_section(
 ):
     if len(headings) != 6 or len(data) != 6:
         raise ValueError
-    ws.merge_cells("A{s}:A{e}".format(s=start_row, e=start_row + 1))
     ws[f"A{start_row}"] = title
     apply_grey(ws[f"A{start_row}"])
-
+    ws.merge_cells("A{s}:A{e}".format(s=start_row, e=start_row + 1))
+    
     for i, col in enumerate(["B", "C", "D", "E", "F", "G"]):
         ws[f"{col}{start_row}"] = headings[i]
         apply_grey(ws[f"{col}{start_row}"])
@@ -276,16 +282,16 @@ def create_section(
             if col == "G" and flag:
                 ws[f"{col}{start_row+1}"].number_format = COMMA_FORMAT_INTEGER
 
-    apply_thick_border(
-        ws, row_start=start_row, row_end=start_row + 1, column_start=1, column_end=7
-    )
+    # apply_thick_border(
+    #     ws, row_start=start_row, row_end=start_row + 1, column_start=1, column_end=7
+    # )
 
-    ws.row_dimensions[start_row + 2].height = 70
+    ws.row_dimensions[start_row + 2].height = 50
     chart = BarChart()
     chart.type = "bar"
-    chart.height = 2.5
-    chart.style = 3
-    chart.width = 19.2
+    chart.height = 1.8
+    chart.style = 2
+    chart.width = 15.5
     chart.legend = None
     chart.roundedCorners = False
 
@@ -312,12 +318,16 @@ def create_section(
 
     # chart.y_axis.min = 0
     # chart.y_axis.max = 100
+
+    line_style = LineProperties(w = 100)
+    graphical_props = GraphicalProperties(ln=line_style)
+
     chart.y_axis.scaling.min = 0
-    chart.y_axis.scaling.max = 105
-    chart.y_axis.majorGridlines = ChartLines()
+    chart.y_axis.scaling.max = 103
+    chart.y_axis.minorGridlines = ChartLines(spPr = graphical_props)
     chart.y_axis.tickLblPos = "nextTo" 
 
-    chart.y_axis.majorUnit = 20
+    chart.y_axis.minorUnit = 20
     chart.y_axis.axPos = "b"
 
     chart.dataLabels = DataLabelList()
@@ -332,29 +342,28 @@ def create_section(
 def set_default(cell, value):
     cell.font = Font(size=10)
     cell.alignment = center
-    cell.border = thin_border
+    cell.border = medium_border
     cell.value = value
-
 
 def apply_grey(cell):
     cell.fill = grey_fill
     cell.font = Font(size=10)
     cell.alignment = center
-    cell.border = thin_border
+    cell.border = medium_border
 
 
 def apply_blue(cell):
     cell.fill = blue_fill
     cell.font = Font(bold=True, size=10, color="FFFFFF")
     cell.alignment = center
-    cell.border = thin_border
+    cell.border = medium_border
 
 
 def apply_orange(cell):
     cell.fill = orange_fill
     cell.font = Font(bold=True, size=10, color="FFFFFF")
     cell.alignment = center
-    cell.border = thin_border
+    cell.border = medium_border
 
 
 def apply_thick_border(

@@ -8,10 +8,10 @@ from dateutil.relativedelta import relativedelta
 
 load_dotenv()
 
-MAIN_URL = "https://www.englishplatform.co.kr/elp_login.php"
-ADMIN_URL = "https://www.englishplatform.co.kr/adm/member_list.php?teaid=&branid=&sfl=mb_level&stx=3&page={page}"
+MAIN_URL = "https://www.readandtalk.co.kr/elp_login.php"
+ADMIN_URL = "https://www.readandtalk.co.kr/adm/member_list.php?teaid=&branid=&sfl=mb_level&stx=3&page={page}"
 REPORT_URL_TEMPLATE = (
-    "https://www.englishplatform.co.kr/adm/report_mini.php?mb_date1={date}&mb_id={s_id}"
+    "https://www.readandtalk.co.kr/adm/report_mini.php?mb_date1={date}&mb_id={s_id}"
 )
 
 
@@ -92,11 +92,15 @@ class StudentInfo(BaseModel):
 
 def open_readandtalk() -> list[StudentInfo]:
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
+        browser = p.chromium.launch(headless=False)
         context = browser.new_context()
         page = context.new_page()
         page.goto(MAIN_URL)
 
+        # CLOSE POPUP
+        if page.locator("button[onclick='closePopupToday()']").count() > 0:
+            page.locator("button[onclick='closePopupToday()']").click()
+        
         # LOGIN
         input_id = page.locator("input.the-signin-account")
         input_pw = page.locator("input.the-signin-password")
@@ -121,6 +125,8 @@ def open_readandtalk() -> list[StudentInfo]:
 
         # ITERATE TO GET REPORTS
         for s_id in student_ids:
+            # if s_id != "hs8165":
+            #    continue
             try:
                 student_infos.append(get_student_info(page, s_id = s_id))
             except Exception as e:
